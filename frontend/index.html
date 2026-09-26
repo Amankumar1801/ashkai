@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AshKai — search that doesn't watch you back</title>
+<meta name="description" content="AshKai is a private meta-search engine: no logs, no cookies, no profiling. Blends independent engines, shows its own privacy math, and never phones home." />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="shell">
+
+  <!-- Empty state -->
+  <section id="hero" class="hero">
+    <div class="wordmark" id="hero-wordmark"><span id="hero-wm-a"></span><span class="dot" id="hero-wm-dot"></span><span id="hero-wm-b"></span><span class="cursor" id="hero-wm-cursor" hidden>_</span></div>
+    <p class="lede" id="hero-lede"></p>
+    <div id="hero-reveal" class="hero-reveal">
+      <form class="searchbar" id="hero-form">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="hero-input" type="text" placeholder="search_ or try !w, !gh, 5 km to miles" autocomplete="off" />
+      </form>
+      <div class="hero-hints">
+        <span><code>!w</code> Wikipedia</span>
+        <span><code>!gh</code> GitHub</span>
+        <span><code>!so</code> Stack Overflow</span>
+        <span><code>12 * (4+3)</code> calculator</span>
+        <span><code>5 km to miles</code> unit convert</span>
+      </div>
+
+      <div class="hero-principles">
+        <div>
+          <h3>Nothing kept</h3>
+          <p>No query logs, no cookies, no account. The privacy score and search vault below run entirely in your browser.</p>
+        </div>
+        <div>
+          <h3>Independent, blended</h3>
+          <p>Results are fused from engines with separate indexes using rank fusion, so no single one decides what you see.</p>
+        </div>
+        <div>
+          <h3>Shows its work</h3>
+          <p>Every search opens a ledger: which engines answered, what got stripped from each link, how exposed your query was.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results state -->
+  <div id="app" hidden>
+    <div class="topbar">
+      <a href="/" class="wordmark" id="home-link">Ash<span class="dot">_</span>Kai<span class="cursor">_</span></a>
+      <form class="searchbar" id="top-form">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="top-input" type="text" autocomplete="off" />
+        <button class="searchbar-submit" type="submit">Search</button>
+      </form>
+    </div>
+
+    <div id="results-layout" class="results-layout">
+      <main id="main-col">
+        <div id="meta-row" class="meta-row"></div>
+        <div id="cards"></div>
+        <ol id="result-list" class="result-list"></ol>
+      </main>
+
+      <aside class="ledger">
+        <h2>Ledger</h2>
+
+        <div class="ledger-section">
+          <div class="ledger-section-title">Query exposure</div>
+          <div class="exposure-meter"><div id="exposure-fill" class="exposure-meter-fill"></div></div>
+          <div id="exposure-verdict" class="exposure-verdict"></div>
+          <ul id="exposure-reasons" class="exposure-reasons"></ul>
+        </div>
+
+        <div class="ledger-section">
+          <div class="ledger-section-title">Engines this search</div>
+          <div id="engine-chips" class="engine-chip-row"></div>
+        </div>
+
+        <div class="ledger-section" id="lens-section">
+          <div class="ledger-section-title">Lens — each engine, unblended</div>
+          <div id="lens-body"></div>
+        </div>
+
+        <div class="ledger-section" id="synth-section" hidden>
+          <div class="ledger-section-title">Synthesize</div>
+          <button id="synth-btn" class="synth-btn">Summarize top results</button>
+          <div id="synth-output" class="synth-output"></div>
+        </div>
+
+        <div class="ledger-section">
+          <div class="ledger-section-title">Local search vault</div>
+          <div class="vault-toggle">
+            <span>Remember searches on this device<small>Encrypted client-side, never sent anywhere. Off by default.</small></span>
+            <button id="vault-switch" class="switch" type="button" aria-pressed="false"></button>
+          </div>
+          <div id="vault-list" class="vault-list"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <section class="game-section" id="game-section">
+    <div class="game-header">
+      <span class="game-title">$ offline_runner</span>
+      <span class="game-hint" id="game-hint">SPACE / TAP to jump &middot; &darr; to duck &middot; works with zero connection</span>
+      <span class="game-score" id="game-score">SCORE 00000&nbsp;&nbsp;&nbsp;HI 00000</span>
+    </div>
+    <canvas id="game-canvas" height="140" aria-label="AshKai offline runner mini-game"></canvas>
+  </section>
+
+  <footer class="foot">
+    <span>AshKai — no logs, no cookies, no third-party requests.</span>
+    <span id="build-tag">self-hosted instance</span>
+  </footer>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

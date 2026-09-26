@@ -1,0 +1,8 @@
+services:
+  ashkai:
+    build: .
+    ports:
+      - "8787:8787"
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
