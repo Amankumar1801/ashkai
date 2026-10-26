@@ -1,5 +1,5 @@
-// Fast local answers that don't need to hit any search engine at all —
-// the fastest, most private result is the one that never leaves the server.
+// Resolve common answers locally. The current server handler still sends
+// the query to configured search providers after calling this helper.
 
 const UNIT_TABLE = {
   m: 1, meter: 1, meters: 1, metre: 1, metres: 1,

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title description">
+  <title id="title">AshKai private meta-search</title>
+  <desc id="description">AshKai branded banner artwork showing a search field and independent search sources on a dark green grid.</desc>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#193322" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#39ff6a" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#39ff6a" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" fill="#050906"/>
+  <rect width="1280" height="640" fill="url(#grid)" opacity=".7"/>
+  <circle cx="1040" cy="210" r="330" fill="url(#glow)"/>
+  <path d="M72 74h34M72 74v34M1208 566h-34m34 0v-34" fill="none" stroke="#39ff6a" stroke-width="3"/>
+
+  <g font-family="Consolas, 'Courier New', monospace">
+    <text x="100" y="168" fill="#39ff6a" font-size="20" letter-spacing="5">PRIVATE META-SEARCH</text>
+    <text x="96" y="280" fill="#f1fff3" font-size="94" font-weight="700">Ash<tspan fill="#39ff6a">_</tspan>Kai</text>
+    <text x="102" y="342" fill="#c6d8ca" font-size="27">Search across independent engines.</text>
+    <text x="102" y="384" fill="#9fb8a5" font-size="21">See the sources. Understand the trade-offs.</text>
+
+    <rect x="102" y="438" width="610" height="68" fill="#0a110c" stroke="#2c5a3b" stroke-width="2"/>
+    <circle cx="137" cy="471" r="12" fill="none" stroke="#39ff6a" stroke-width="3"/>
+    <path d="m146 480 9 9" stroke="#39ff6a" stroke-width="3"/>
+    <text x="176" y="480" fill="#6d8974" font-size="20">search privately_</text>
+    <text x="102" y="558" fill="#6d8974" font-size="16" letter-spacing="2">SELF-HOSTED  /  OPEN SOURCE PROJECT</text>
+
+    <g transform="translate(820 175)">
+      <rect width="342" height="300" fill="#08100a" stroke="#24472e" stroke-width="2"/>
+      <text x="28" y="44" fill="#9fb8a5" font-size="15" letter-spacing="2">RESULT SOURCES</text>
+      <path d="M28 66h286" stroke="#24472e"/>
+      <g font-size="19">
+        <circle cx="42" cy="112" r="6" fill="#39ff6a"/>
+        <text x="64" y="119" fill="#f1fff3">DuckDuckGo</text>
+        <text x="308" y="119" fill="#6d8974" text-anchor="end">01</text>
+        <circle cx="42" cy="164" r="6" fill="#39ff6a"/>
+        <text x="64" y="171" fill="#f1fff3">Wikipedia</text>
+        <text x="308" y="171" fill="#6d8974" text-anchor="end">02</text>
+        <circle cx="42" cy="216" r="6" fill="#ffd23f"/>
+        <text x="64" y="223" fill="#9fb8a5">Brave / Google</text>
+        <text x="308" y="223" fill="#6d8974" text-anchor="end">OPT</text>
+      </g>
+      <path d="M28 250h286" stroke="#24472e"/>
+      <text x="28" y="279" fill="#39ff6a" font-size="15" letter-spacing="1">RANK FUSION + SOURCE LEDGER</text>
+    </g>
+  </g>
+</svg>
