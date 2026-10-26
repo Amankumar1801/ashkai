@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title description">
+  <title id="title">Watch the AshKai demo</title>
+  <desc id="description">Illustrated dark green video preview card linking to the AshKai demo video.</desc>
+  <defs>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#193322" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101b12"/>
+      <stop offset="1" stop-color="#050906"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="420" rx="10" fill="url(#panel)"/>
+  <rect width="1200" height="420" rx="10" fill="url(#grid)" opacity=".55"/>
+  <rect x="1" y="1" width="1198" height="418" rx="9" fill="none" stroke="#2c5a3b" stroke-width="2"/>
+  <g font-family="Consolas, 'Courier New', monospace">
+    <text x="72" y="108" fill="#39ff6a" font-size="18" letter-spacing="4">PROJECT WALKTHROUGH</text>
+    <text x="68" y="184" fill="#f1fff3" font-size="54" font-weight="700">See AshKai in action</text>
+    <text x="72" y="232" fill="#9fb8a5" font-size="22">Search · compare sources · inspect the Ledger</text>
+    <text x="72" y="360" fill="#6d8974" font-size="15" letter-spacing="2">VIDEO INCLUDED IN THIS REPOSITORY</text>
+    <circle cx="1000" cy="210" r="92" fill="#39ff6a" opacity=".1"/>
+    <circle cx="1000" cy="210" r="74" fill="#08100a" stroke="#39ff6a" stroke-width="2"/>
+    <path d="M985 171 1043 210 985 249Z" fill="#39ff6a"/>
+  </g>
+</svg>

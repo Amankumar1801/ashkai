@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="700" viewBox="0 0 1400 700" role="img" aria-labelledby="title description">
+  <title id="title">AshKai search request flow</title>
+  <desc id="description">A diagram showing browser requests entering the AshKai server, searching configured providers, fusing results, and returning the Ledger. Optional synthesis is sent to Anthropic only after a user click.</desc>
+  <defs>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#193322" stroke-width="1"/>
+    </pattern>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="m0 0 10 5-10 5" fill="none" stroke="#39ff6a" stroke-width="2"/>
+    </marker>
+    <marker id="mutedArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="m0 0 10 5-10 5" fill="none" stroke="#9fb8a5" stroke-width="2"/>
+    </marker>
+    <style>
+      .label { font: 18px Consolas, "Courier New", monospace; fill: #f1fff3; }
+      .small { font: 14px Consolas, "Courier New", monospace; fill: #9fb8a5; }
+      .title { font: 700 28px Consolas, "Courier New", monospace; fill: #f1fff3; }
+      .node { fill: #0a110c; stroke: #2c5a3b; stroke-width: 2; rx: 8; }
+      .primary { fill: #0c1b10; stroke: #39ff6a; stroke-width: 2; rx: 8; }
+      .wire { fill: none; stroke: #39ff6a; stroke-width: 2; marker-end: url(#arrow); }
+      .optional { fill: none; stroke: #9fb8a5; stroke-width: 2; stroke-dasharray: 8 7; marker-end: url(#mutedArrow); }
+    </style>
+  </defs>
+  <rect width="1400" height="700" rx="10" fill="#050906"/>
+  <rect width="1400" height="700" rx="10" fill="url(#grid)" opacity=".45"/>
+  <rect x="1" y="1" width="1398" height="698" rx="9" fill="none" stroke="#24472e" stroke-width="2"/>
+  <text x="54" y="62" class="title">A query in. A transparent blend out.</text>
+  <text x="56" y="92" class="small">Normal search requests may be sent to every enabled provider.</text>
+
+  <rect x="55" y="278" width="190" height="112" class="node"/>
+  <text x="150" y="323" text-anchor="middle" class="label">Browser</text>
+  <text x="150" y="353" text-anchor="middle" class="small">search + Ledger UI</text>
+
+  <rect x="325" y="248" width="250" height="172" class="primary"/>
+  <text x="450" y="295" text-anchor="middle" class="label">AshKai server</text>
+  <text x="450" y="328" text-anchor="middle" class="small">Express routes</text>
+  <text x="450" y="355" text-anchor="middle" class="small">rate limiting</text>
+  <text x="450" y="382" text-anchor="middle" class="small">instant answer + fan-out</text>
+  <path d="M245 334H320" class="wire"/>
+  <text x="282" y="317" text-anchor="middle" class="small">query</text>
+
+  <rect x="675" y="142" width="220" height="76" class="node"/>
+  <text x="785" y="176" text-anchor="middle" class="label">DuckDuckGo</text>
+  <text x="785" y="199" text-anchor="middle" class="small">HTML endpoint</text>
+  <rect x="675" y="252" width="220" height="76" class="node"/>
+  <text x="785" y="298" text-anchor="middle" class="label">Wikipedia API</text>
+  <rect x="675" y="362" width="220" height="76" class="node"/>
+  <text x="785" y="395" text-anchor="middle" class="label">Brave Search</text>
+  <text x="785" y="419" text-anchor="middle" class="small">optional API key</text>
+  <rect x="675" y="472" width="220" height="76" class="node"/>
+  <text x="785" y="505" text-anchor="middle" class="label">Google Search</text>
+  <text x="785" y="529" text-anchor="middle" class="small">optional API key</text>
+  <path d="M575 290C620 290 620 180 670 180" class="wire"/>
+  <path d="M575 315H670" class="wire"/>
+  <path d="M575 350C620 350 620 400 670 400" class="wire"/>
+  <path d="M575 375C620 375 620 510 670 510" class="wire"/>
+
+  <rect x="995" y="258" width="210" height="150" class="primary"/>
+  <text x="1100" y="301" text-anchor="middle" class="label">Merge results</text>
+  <text x="1100" y="333" text-anchor="middle" class="small">Promise.allSettled</text>
+  <text x="1100" y="360" text-anchor="middle" class="small">RRF + URL dedup</text>
+  <text x="1100" y="387" text-anchor="middle" class="small">provider status + Lens</text>
+  <path d="M895 180C945 180 945 285 990 285" class="wire"/>
+  <path d="M895 290H990" class="wire"/>
+  <path d="M895 400C945 400 945 375 990 375" class="wire"/>
+  <path d="M895 510C945 510 945 395 990 395" class="wire"/>
+
+  <path d="M995 334H905V600H155V395" class="wire"/>
+  <text x="556" y="583" text-anchor="middle" class="small">fused results + provider details</text>
+  <rect x="325" y="500" width="250" height="92" class="node"/>
+  <text x="450" y="536" text-anchor="middle" class="label">Anthropic</text>
+  <text x="450" y="563" text-anchor="middle" class="small">optional summary provider</text>
+  <path d="M245 366C285 450 325 450 365 420" class="optional"/>
+  <text x="286" y="438" text-anchor="middle" class="small">explicit summarize action</text>
+  <path d="M450 420V495" class="optional"/>
+  <text x="617" y="475" class="small">only if server API key is configured</text>
+</svg>

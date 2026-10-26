@@ -1,67 +1,55 @@
 # AshKai architecture
 
-The documented application lives in the repository-root `backend/` and
-`frontend/` directories. The separate `ashkai/` directory contains a
-divergent copy; the setup and deployment commands in the root README use
-the root-level application.
+The maintained quickstart in the root README targets the application in
+the repository-root `backend/` and `frontend/` directories. The separate
+`ashkai/` directory contains a divergent copy and is not used by those
+instructions.
 
-## Repository layout
+## Request flow
 
-```text
-.
-├── backend/
-│   ├── server.js
-│   └── src/
-│       ├── engines/          Search-provider integrations
-│       └── lib/              Fusion, privacy helpers, bangs, answers, synthesis
-├── frontend/                 HTML/CSS/JS, local fonts, PWA assets, mini-game
-├── docs/
-│   ├── architecture.md
-│   └── media/                Repository banner and demo video
-├── Dockerfile
-├── docker-compose.yml
-└── README.md
-```
+![Diagram of a search request through AshKai and its configured providers](media/search-flow.svg)
 
-## Search request flow
+A regular search request is handled by `backend/server.js`. Bangs return
+a redirect response. Other queries can produce a local instant answer and
+are sent to enabled providers. Provider results are collected independently,
+combined with rank fusion, and returned with per-engine status and Lens data.
+The optional synthesis route sends a query and selected result excerpts to
+Anthropic only after the user requests a summary.
 
-```mermaid
-flowchart LR
-    Browser -->|GET /api/search| Server[AshKai Node / Express]
-    Server -->|bang shortcut| Browser
-    Server -->|search query| DDG[DuckDuckGo]
-    Server -->|search query| Wiki[Wikipedia]
-    Server -. optional .-> Brave[Brave Search API]
-    Server -. optional .-> Google[Google Programmable Search]
-    DDG --> Merge[Promise.allSettled and rank fusion]
-    Wiki --> Merge
-    Brave --> Merge
-    Google --> Merge
-    Merge -->|results, Ledger data, exposure score| Browser
-    Browser -->|POST /api/synthesize on explicit click| Server
-    Server -. key configured .-> Anthropic[Anthropic API]
-```
+## Components
 
-Each search-engine call settles independently, so a failed provider does
-not prevent results from the others. The frontend receives the fused
-results and per-engine Ledger data. Optional synthesis sends the query and
-result excerpts to Anthropic only when the user requests it and a server
-API key is configured.
+| Path | Responsibility |
+| --- | --- |
+| `backend/server.js` | Express routes, rate limits, static frontend, and provider wiring. |
+| `backend/src/engines/` | DuckDuckGo, Wikipedia, Brave, and Google integrations. |
+| `backend/src/lib/fuse.js` | Reciprocal Rank Fusion, deduplication, and per-engine Lens data. |
+| `backend/src/lib/privacy.js` | Tracking-parameter stripping and advisory query scoring. |
+| `backend/src/lib/instantAnswers.js` | Calculator, unit-conversion, and time answers. |
+| `frontend/` | No-build UI, browser-local features, PWA shell, and canvas game. |
+| `docs/media/` | Repository banner, demo video, and explanatory diagrams. |
 
-## Implementation boundaries
+## Rank fusion
 
-- `backend/server.js` wires routes, rate limits, and provider integrations.
-- `backend/src/engines/` contains the DuckDuckGo, Wikipedia, Brave, and
-  Google search adapters.
-- `backend/src/lib/fuse.js` combines provider results and builds the
-  per-engine Lens view.
-- `backend/src/lib/privacy.js` strips tracking parameters and computes the
-  advisory query exposure score.
-- `backend/src/lib/instantAnswers.js` resolves calculator, conversion,
-  and time answers locally. The current server flow still sends these
-  queries to configured search providers.
-- `frontend/` contains the no-build web app, browser-local features, PWA
-  shell, and offline mini-game.
+AshKai uses Reciprocal Rank Fusion with `K = 60`. For a document returned
+by multiple providers, each provider contributes `1 / (K + rank)` to the
+document's score. URL host and path are used to group equivalent results.
+The illustrative values and formula are shown in
+[`media/rrf-illustration.svg`](media/rrf-illustration.svg); they are not
+benchmarks or live search measurements.
 
-For setup, configuration, and known limitations, see the
-[main README](../README.md).
+## Data and privacy boundaries
+
+- The server logs request method, path, response status, and timing, but
+  not query strings or client IP addresses. Client connection details are
+  still used in memory for rate limiting.
+- Queries sent to configured providers are subject to those providers'
+  policies. The exposure score is advisory and calculated after upstream
+  search requests.
+- Calculator, conversion, and time answers are calculated locally, but the
+  current request flow still sends those queries to configured providers.
+- The optional vault and pinboard are browser-local. The vault is encrypted
+  with a key stored alongside its data; the pinboard is not encrypted.
+- The service worker caches app-shell assets, not `/api/` responses.
+
+See the [README](../README.md) for setup, configuration, and known
+limitations.

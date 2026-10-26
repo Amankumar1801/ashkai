@@ -1,120 +1,85 @@
-![AshKai branded banner artwork (not a product screenshot)](docs/media/ashkai-banner.svg)
-
 # AshKai — Private Meta-Search
 
-**Search across independent engines, with the ranking and privacy trade-offs in view.**
+![AshKai banner: private meta-search with independent sources and rank fusion](docs/media/ashkai-banner.svg)
 
-AshKai is a self-hostable meta-search app. A browser sends a query to an
-AshKai Node/Express server, which requests results from configured search
-providers and combines them into one ranked list. A plain HTML/CSS/JavaScript
-frontend needs no build step or framework.
+**Search across independent engines. See how results are combined and understand the privacy trade-offs.**
 
-AshKai does not write search queries to an application database or include
-them in its request logs. The server does receive the query and client
-connection details (the latter are used for in-memory rate limiting), then
-forwards the query to the selected upstream providers. Those providers may
-process or retain queries under their own policies. AshKai is a self-hosted
-privacy-oriented search tool, not an anonymity service.
+AshKai is a self-hostable meta-search app built with Node.js, Express, and
+plain HTML/CSS/JavaScript. Its server queries configured search providers
+and merges their results into one ranked list, with per-engine details in
+the Ledger.
 
-## Demo
+AshKai does not persist queries in an application database or include them
+in its request logs. Queries are sent to the providers enabled on your
+instance, which may process or retain them under their own policies. The
+server also handles client connection details in memory for rate limiting.
+AshKai is privacy-oriented software, not an anonymity service.
 
-[Watch the AshKai demo video (MP4)](docs/media/ashkai-demo.mp4).
+## Watch the demo
 
-## Features
+[![Watch the AshKai demo video](docs/media/demo-preview.svg)](docs/media/ashkai-demo.mp4)
 
-- **No application query logs.** The server logs method, path, status, and
-  timing without query strings or client IP addresses. The rate limiter uses
-  client connection details in memory; the app does not persist them.
-- **No user accounts or browser cookies.**
-- **Server-side search requests.** The browser sends its query to the
-  AshKai server rather than directly to the search engines. The server
-  sends queries to DuckDuckGo and Wikipedia, plus Brave or Google when
-  configured; those providers see the query and AshKai server's network
-  address.
-- **Tracking-parameter stripping.** `utm_*`, `fbclid`, `gclid`, `msclkid`
-  and similar are stripped from every result URL before you see it.
-- **Rate limiting** on both API routes, to keep one client from hammering
-  upstream engines on everyone's behalf.
-- **Bang shortcuts** (`!w query`, `!gh query`, `!yt query`, …) that jump
-  straight to a site's own search.
-- **Instant answers** for calculator expressions, unit conversions, and
-  the time. AshKai computes these locally, but the current server handler
-  also sends the query to configured providers; see the limitation below.
-- **Rank fusion, not "pick one engine."** Results from every engine are
-  merged with Reciprocal Rank Fusion (`backend/src/lib/fuse.js`), allowing
-  agreement across engines to influence the combined ranking.
-- **The Ledger.** Every search opens a small inspector panel showing
-  which engines returned, failed, or returned no results, along with each
-  engine's unblended top results.
-- **A query exposure score.** AshKai checks for patterns such as an email,
-  phone number, street address, or first-person medical/legal question and
-  returns an advisory score with the results. It does not block or alter
-  the query; the score is computed after the server has contacted providers,
-  so it cannot prevent a sensitive query from being sent upstream.
-- **A local, encrypted search vault.** Opt-in, off by
-  default. If you turn it on, your recent searches are kept — AES-GCM
-  encrypted — only in your own browser's `localStorage`, and every entry
-  expires after 24 hours and is removed the next time the vault is read.
-  The encryption key is stored in the same browser storage as the
-  ciphertext, so this protects against casual inspection, not someone
-  with access to your unlocked device. The server never sees the vault.
-- **Optional one-click synthesis.** If you add your own Anthropic API
-  key, clicking "Summarize top results" sends the query and up to six
-  result excerpts and URLs to Anthropic for a short, source-cited
-  summary. It does not run automatically or re-rank results.
-- **Self-hosted fonts.** Even the typefaces are bundled as local `.woff2`
-  files, so loading the page never pings Google Fonts.
-- **An offline mini-game, always available.** Same genre as the browser's
-  dino game (endless side-scrolling dodge), different world: a padlock
-  outrunning "beacons" (jump) and "scanners" (duck) instead of cacti and
-  pterodactyls. Pure canvas, zero dependencies, zero network calls — so
-  it can be played offline after the app shell has been cached. High score
-  saved locally. See `frontend/game.js`.
-- **Installable PWA with an offline app shell.** `manifest.json` and
-  `frontend/sw.js` cache the interface assets. The shell and mini-game can
-  load offline after caching, but search and synthesis still require a
-  connection; `/api/*` responses are never cached.
-- **Query cloaking.** An opt-in toggle in the Ledger that fires 2–3
-  randomized decoy searches alongside every real one. The real query is
-  still sent unchanged; this adds noise but does not provide anonymity.
-- **Panic wipe.** One button (or press Escape twice quickly) instantly
-  clears the vault and pinboard and jumps back to the homepage. Built
-  for a shared or borrowed computer moment, not a security boundary.
-- **Your own custom bangs.** Define shortcuts like `!mypy` →
-  `https://github.com/search?q={q}+language:python` in the hero page.
-  Saved only in your browser and checked *before* a query ever reaches
-  AshKai's server — a custom bang never touches the backend at all.
-- **Local-only autocomplete.** Suggestions are drawn exclusively from
-  your own encrypted vault, decrypted and filtered entirely client-side.
-  If the vault's off or empty, there's nothing to suggest — every other
-  provider's autocomplete is not queried as you type.
-- **Search the past.** A Ledger toggle that opens results via the
-  Wayback Machine's most recent snapshot instead of the live page. The
-  archive is contacted only when you follow a result with this option
-  enabled.
-- **A local Pinboard.** Pin specific results with tags and export them as
-  JSON. The pinboard is stored in browser `localStorage` and is not
-  encrypted or synchronized.
+The linked MP4 is included in [`docs/media/`](docs/media/). The preview
+graphic is an illustration, not a screenshot.
 
-## Architecture
+## What AshKai does
 
-See [the architecture guide](docs/architecture.md) for the repository
-layout, request flow, and integration boundaries.
+### Search and inspect
 
-## Technology
+- Queries DuckDuckGo and Wikipedia; optionally adds Brave Search and Google
+  Programmable Search when configured.
+- Combines results with Reciprocal Rank Fusion (RRF), strips common
+  tracking parameters from result URLs, and shows provider status and
+  unblended results in the Ledger.
+- Supports bangs such as `!w graph theory`, local calculator and unit
+  conversion answers, and a server-time answer.
 
-- **Backend:** Node.js 18+, Express 4, Cheerio for DuckDuckGo's HTML results,
-  and `express-rate-limit` for API throttling.
-- **Frontend:** plain HTML, CSS, and JavaScript; no build step or frontend
-  framework. Local storage and Web Crypto power browser-local features.
-- **Deployment:** one Node process or the included Docker image and Compose
-  file. The backend serves the root-level frontend assets.
+### Keep browser data local
 
-## Quickstart (local)
+- No user accounts or browser cookies. Optional search history is kept in
+  browser storage, encrypted with Web Crypto, and expires after 24 hours.
+  Its key is stored alongside the encrypted data, so it is not protection
+  against someone with access to your unlocked browser profile.
+- Optional pinboard, custom bangs, vault-only autocomplete, panic wipe, and
+  Wayback links are browser-side features.
+- An opt-in cloaking toggle sends randomized decoy queries as well as the
+  real query. It adds noise; it does not hide the real query.
 
-Requires Node.js 18 or later and npm.
-If `backend/.env` already exists, keep it; copy the example only when
-creating a new local environment file.
+### Extend and install
+
+- Optional, user-requested Anthropic summaries use up to six result
+  excerpts and URLs; they do not run automatically or affect ranking.
+- The installable PWA caches its app shell for offline access. Search and
+  summaries still require a connection; API responses are not cached.
+- A small canvas runner game works offline once the app shell is available.
+
+## How search works
+
+![AshKai search request flow](docs/media/search-flow.svg)
+
+Providers run independently so one failed engine does not prevent results
+from the others. Calculator, conversion, and time answers are computed
+locally, but the current server flow still sends those queries to
+configured search providers. The query exposure score is also computed
+after provider requests; it cannot prevent a query from being sent.
+
+### Why rank fusion?
+
+RRF adds a contribution of `1 / (60 + rank)` for each provider that returns
+a result. This illustrative example uses one result at rank 1 and another
+appearing at ranks 1 and 3; it explains the formula, not measured AshKai
+search performance.
+
+![Illustrative Reciprocal Rank Fusion scores](docs/media/rrf-illustration.svg)
+
+For implementation details and the repository map, see
+[`docs/architecture.md`](docs/architecture.md).
+
+## Run locally
+
+**Requirements:** Node.js 18 or later and npm.
+
+From the repository root:
 
 ```bash
 cd backend
@@ -123,110 +88,73 @@ npm install
 npm start
 ```
 
-Open **http://localhost:8787** — the backend serves the frontend itself,
-so no separate frontend server is needed. The copied `.env` works without
-optional API keys. Try a search, `!w graph theory`, `5 km to miles`, or
-`12 * (7 + 3)`.
+If `backend/.env` already exists, keep it instead of copying over it. On
+PowerShell, create a new file with `Copy-Item .env.example .env`. Open
+<http://localhost:8787>; the backend serves the frontend. API keys are
+optional for local development.
 
-For auto-reload during backend development, run `npm run dev` instead of
-`npm start`. In PowerShell, use `Copy-Item .env.example .env` for the
-copy step.
+For automatic backend reloads, run `npm run dev` instead of `npm start`.
 
-## Configuration
+### Configuration
 
-All optional — AshKai works with zero API keys. See `backend/.env.example`:
+Optional settings are documented in [`backend/.env.example`](backend/.env.example).
 
-| Variable | Effect |
-|---|---|
-| `PORT` | Backend port (default `8787`) |
-| `BRAVE_API_KEY` | Adds Brave's independent index to the blend |
-| `GOOGLE_API_KEY` + `GOOGLE_CSE_ID` | Adds Google's official Programmable Search API |
-| `ANTHROPIC_API_KEY` | Enables the "Synthesize" button |
-| `ASHKAI_SUMMARY_MODEL` | Model for synthesis (default `claude-haiku-4-5-20251001`) |
-| `ALLOWED_ORIGINS` | Comma-separated browser origins allowed by CORS. Blank allows any origin; set this for a deployed frontend. This is not authentication. |
+| Variable | Purpose |
+| --- | --- |
+| `PORT` | Backend port; defaults to `8787`. |
+| `BRAVE_API_KEY` | Enables Brave Search. |
+| `GOOGLE_API_KEY` and `GOOGLE_CSE_ID` | Enable Google Programmable Search. |
+| `ANTHROPIC_API_KEY` | Enables on-demand result summaries. |
+| `ASHKAI_SUMMARY_MODEL` | Summary model override. |
+| `ALLOWED_ORIGINS` | Comma-separated CORS origins for a separately hosted frontend. Blank allows any origin and is not authentication. |
 
-If you host the frontend separately from the backend, edit
-`frontend/config.js` and set `window.ASHKAI_API_BASE` to your backend's
-URL (without a trailing slash).
+### Docker Compose
 
-## Deployment
+Run from the repository root. Compose requires `backend/.env`; if it
+already exists, keep your local settings.
 
-The backend serves the root-level `frontend/` directory when it is present.
-Run the Node process from `backend/`, or use the repository's Docker setup.
-Hosting provider pricing and availability vary.
+```bash
+cp backend/.env.example backend/.env
+docker compose up --build
+```
 
-- **Docker Compose** (from the repository root). Create the env file first,
-  because Compose requires `backend/.env`. If it already exists, do not
-  overwrite your local configuration:
-  ```bash
-  cp backend/.env.example backend/.env
-  docker compose up --build -d
-  ```
-- **Node host or VPS**: use Node.js 18+, install dependencies from
-  `backend/`, and start with `npm start`. For a public deployment, use
-  HTTPS and set `ALLOWED_ORIGINS` to the frontend origin.
+For a public deployment, use HTTPS and configure `ALLOWED_ORIGINS`. When
+hosting the frontend separately, set `window.ASHKAI_API_BASE` in
+[`frontend/config.js`](frontend/config.js) to the backend URL.
 
-A video demo is included above; there is no hosted live instance or
-separate screenshot gallery yet. Run the app locally to inspect the
-interface yourself.
+## Known limitations
 
-## Extending it
+- DuckDuckGo uses its HTML endpoint rather than an official API and may
+  return no results when challenged or rate-limited. Optional Brave and
+  Google integrations use their official APIs, with their own quotas and
+  availability limits.
+- The query exposure score is advisory and runs after provider requests.
+  Local instant answers also currently go through the normal provider
+  fan-out.
+- Vault entries are pruned when the app reads the vault, not by a
+  background timer while the app is closed. The local encryption key is
+  stored in the same browser storage as the ciphertext.
+- The repository has no automated test suite or license file yet. There
+  is no hosted live instance; the demo video is provided in the repository.
 
-- **Add another engine:** create `backend/src/engines/yourengine.js`
-  exporting an async function that returns `[{url, title, snippet}, ...]`,
-  then add it to the `engineCalls` array in `server.js`. `fuseResults()`
-  picks it up automatically.
-- **Add a bang:** add one line to `BANGS` in `backend/src/lib/bangs.js`.
-- **Change the fusion weighting:** `fuse.js`'s `K` constant controls how
-  much the top of each engine's list dominates — lower it to trust
-  top-ranked results more, raise it to flatten the blend.
+## Project structure
 
-## Known limitations, honestly
-
-- DuckDuckGo's HTML endpoint isn't an official API — it's the same
-  approach SearXNG and similar projects use. It can go quiet (return zero
-  results with no error) if DuckDuckGo rate-limits or challenges the
-  request, which can be more likely from a datacenter/cloud IP than from
-  your own machine. The Ledger panel shows this honestly: an engine
-  chip reading "no results" (amber) means it was reachable but came back
-  empty — check the terminal running the server for a matching warning
-  log. This is one possible reason for seeing only Wikipedia results.
-  Adding `GOOGLE_API_KEY`/`GOOGLE_CSE_ID` or `BRAVE_API_KEY` enables an
-  official API integration and avoids this particular HTML-scrape
-  challenge; those providers have their own quotas and availability limits.
-- The search vault's encryption key lives in the same browser storage as
-  the data it protects (see the comment in `app.js`) — it guards against
-  casual inspection, not against someone with access to your unlocked
-  device. Expired entries are pruned the next time the vault is read; no
-  background timer clears browser storage while the app is closed.
-- No JavaScript-rendered engines are scraped (by design — server-side
-  headless browsing is heavier, slower, and a bigger attack surface for
-  very little relevance gain over the four sources already here).
-- **Instant-answer privacy:** the server computes calculator, unit
-  conversion, and time answers locally, but currently continues with the
-  normal provider fan-out. Those queries are therefore still sent to
-  configured search providers. The privacy score is also computed only
-  after the provider requests. Treat sensitive queries accordingly; this
-  README documents current behavior and does not change it.
-
-## Development status
-
-The features above are implemented in the root-level application. The
-repository does not currently include an automated test suite. Useful
-future work would be adding tests for rank fusion and privacy helpers,
-avoiding provider requests for locally answerable queries, improving
-provider health diagnostics, and publishing a verified demo.
+```text
+backend/       Express server and search-provider integrations
+frontend/      No-build web app, PWA assets, and offline game
+docs/
+  architecture.md
+  media/       Banner, demo video, and explanatory diagrams
+ashkai/        Separate, divergent copy; not used by the root quickstart
+```
 
 ## Contributing
 
-For a bug report or focused improvement, open a GitHub issue or pull
-request with reproduction steps and a description of the behavior
-affected. Keep changes aligned with the existing privacy model and
-document any new external data flow. The quickstart and architecture above
-refer to the root-level app, not the separate `ashkai/` copy.
+Open an issue or pull request with reproduction steps and a focused
+description of the change. Document any new external data flow and keep
+privacy claims consistent with actual behavior.
 
 ## License
 
-No license file is currently included. Ask the repository owner before
-redistributing or reusing this project; a license should be selected
-before accepting external contributions.
+No license file is included. Ask the repository owner before redistributing
+or reusing this project.

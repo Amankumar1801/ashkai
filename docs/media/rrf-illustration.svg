@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title description">
+  <title id="title">Illustrative Reciprocal Rank Fusion example</title>
+  <desc id="description">A horizontal bar chart compares a result returned at ranks one and three across two providers, score 0.03226, with a result at rank one from one provider, score 0.01639. Values use reciprocal rank fusion with K equal to 60 and are illustrative.</desc>
+  <defs>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#193322" stroke-width="1"/>
+    </pattern>
+    <style>
+      .title { font: 700 26px Consolas, "Courier New", monospace; fill: #f1fff3; }
+      .label { font: 17px Consolas, "Courier New", monospace; fill: #f1fff3; }
+      .small { font: 14px Consolas, "Courier New", monospace; fill: #9fb8a5; }
+      .axis { stroke: #54725a; stroke-width: 1.5; }
+      .bar { fill: #39ff6a; }
+      .bar2 { fill: #2fcb58; }
+    </style>
+  </defs>
+  <rect width="1200" height="560" rx="10" fill="#050906"/>
+  <rect width="1200" height="560" rx="10" fill="url(#grid)" opacity=".45"/>
+  <rect x="1" y="1" width="1198" height="558" rx="9" fill="none" stroke="#24472e" stroke-width="2"/>
+  <text x="56" y="62" class="title">Illustrative RRF scores · K = 60</text>
+  <text x="58" y="93" class="small">One result gets a contribution from two provider rankings; the other appears once.</text>
+
+  <text x="78" y="188" class="label">Result A</text>
+  <text x="78" y="216" class="small">Provider 1: rank 1 · Provider 2: rank 3</text>
+  <rect x="78" y="238" width="604" height="42" rx="4" class="bar"/>
+  <text x="700" y="266" class="label">0.03226</text>
+
+  <text x="78" y="344" class="label">Result B</text>
+  <text x="78" y="372" class="small">Provider 1: rank 1 only</text>
+  <rect x="78" y="394" width="307" height="42" rx="4" class="bar2"/>
+  <text x="404" y="422" class="label">0.01639</text>
+
+  <path d="M78 466H952" class="axis"/>
+  <path d="M78 460v12m273-12v12m273-12v12m273-12v12" class="axis"/>
+  <text x="78" y="496" class="small">0</text>
+  <text x="351" y="496" text-anchor="middle" class="small">0.0146</text>
+  <text x="624" y="496" text-anchor="middle" class="small">0.0292</text>
+  <text x="897" y="496" text-anchor="middle" class="small">0.0438 score</text>
+  <text x="78" y="535" class="small">A: 1/(60+1) + 1/(60+3) ≈ 0.03226  ·  B: 1/(60+1) ≈ 0.01639</text>
+</svg>
